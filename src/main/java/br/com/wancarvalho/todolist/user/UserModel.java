@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -20,6 +21,7 @@ public class UserModel {
 
     // @Column(name = "usuario") utiliza Anottation caso queira alterar nome da
     // coluna no banco de dados
+    @Column(unique = true) // define coluna como chave única, evitando registros duplicados
     private String username;
     private String name;
     private String password;
