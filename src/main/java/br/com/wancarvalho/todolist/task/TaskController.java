@@ -1,8 +1,12 @@
 package br.com.wancarvalho.todolist.task;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +22,26 @@ public class TaskController {
     private ITaskRepository taskRepository;
 
     @PostMapping("/")
-    public TaskModel create(@RequestBody TaskModel taskModel, HttpServletRequest request) {
+    public ResponseEntity create(@RequestBody TaskModel taskModel, HttpServletRequest request) {
         var idUser = request.getAttribute("idUser");
         taskModel.setIdUser((UUID) idUser);
+
+        // filtro para não permitir cadastrar com data que seja maior que a data atual
+        var currentDate = LocalDateTime.now();
+        if (currentDate.isAfter(taskModel.getStartedAt()) || currentDate.isAfter(taskModel.getEndAt())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("A data de início deve ser maior do que a data atual");
+        }
+
+        // filtro para não permitir cadastrar caso a data de início seja maior que data
+        // de término
+        if (taskModel.getStartedAt().isAfter(taskModel.getEndAt())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("A data de início deve ser menor que data de termino");
+        }
+
         var task = this.taskRepository.save(taskModel);
-        return task;
+        return ResponseEntity.status(HttpStatus.OK).body(task);
     }
 
 }
