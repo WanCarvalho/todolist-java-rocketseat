@@ -36,6 +36,6 @@ public class UserController {
 
         // retorna status de sucesso do tipo 'CREATED' caso o usuário tenha sido
         // adicionado ao banco
-        return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
+        return ResponseEntity.status(HttpStatus.OK).body(userCreated);
     }
 }
