@@ -63,11 +63,13 @@ public class TaskController {
         var idUser = request.getAttribute("idUser");
         var task = this.taskRepository.findById(id).orElse(null);
 
+        // testa se a tarefa existe antes de realizar o update
         if (task == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Tarefa não encontrada.");
         }
 
+        // testa se a tarefa atual pertence ao usuário logado para poder ser atualizada
         if (!task.getIdUser().equals(idUser)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Usuário não tem permissão para alterar essa tarefa.");
